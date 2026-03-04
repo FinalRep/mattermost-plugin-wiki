@@ -9,6 +9,7 @@ import rehypeSanitize from 'rehype-sanitize';
 import '@uiw/react-md-editor/markdown-editor.css';
 
 import GenericModal, {InlineLabel} from '../widgets/generic_modal';
+import useEditorColorMode from '../../hooks/useEditorColorMode';
 
 const ID = 'wikiDoc_create';
 
@@ -23,6 +24,7 @@ export type WikiDocCreateModalProps = {
 } & Partial<ComponentProps<typeof GenericModal>>;
 
 const BaseInput = styled.input`
+    color: rgb(var(--center-channel-color-rgb));
     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
     background-color: rgb(var(--center-channel-bg-rgb));
     border: none;
@@ -56,12 +58,6 @@ const Body = styled.div`
 `;
 
 const EditorWrapper = styled.div`
-    .w-md-editor-text-input {
-         color: rgb(var(--center-channel-color-rgb)) !important;
-         -webkit-text-fill-color: rgb(var(--center-channel-color-rgb)) !important;
-         caret-color: rgb(var(--center-channel-color-rgb));
-     }
-
     .w-md-editor {
         border-radius: 4px;
         box-shadow: inset 0 0 0 1px rgba(var(--center-channel-color-rgb), 0.16);
@@ -86,7 +82,9 @@ const EditorWrapper = styled.div`
 
     .w-md-editor-text-input,
     .w-md-editor-text {
-        color: rgb(var(--center-channel-color-rgb));
+        color: rgb(var(--center-channel-color-rgb)) !important;
+        -webkit-text-fill-color: rgb(var(--center-channel-color-rgb)) !important;
+        caret-color: rgb(var(--center-channel-color-rgb));
         background-color: rgb(var(--center-channel-bg-rgb));
         font-size: 14px;
         line-height: 1.6;
@@ -105,6 +103,7 @@ const WikiDocCreateModal = ({createFunc, ...modalProps}: WikiDocCreateModalProps
     const [description] = useState('');
     const [status] = useState('');
     const [content, setContent] = useState('');
+    const colorMode = useEditorColorMode();
 
     const requirementsMet = (name !== '');
 
@@ -131,7 +130,7 @@ const WikiDocCreateModal = ({createFunc, ...modalProps}: WikiDocCreateModalProps
                     placeholder={formatMessage({defaultMessage: 'Give your page a title'})}
                 />
                 <InlineLabel>{formatMessage({defaultMessage: 'Content'})}</InlineLabel>
-                <EditorWrapper>
+                <EditorWrapper data-color-mode={colorMode}>
                     <MDEditor
                         value={content}
                         onChange={(val) => setContent(val ?? '')}
@@ -166,7 +165,6 @@ const WikiDocCreateModal = ({createFunc, ...modalProps}: WikiDocCreateModalProps
                             commands.codeLive,
                             commands.codePreview,
                         ]}
-
                         placeholder={formatMessage({defaultMessage: 'Write your content in Markdown...'})}
                     />
                 </EditorWrapper>

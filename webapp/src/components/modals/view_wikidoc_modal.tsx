@@ -10,6 +10,7 @@ import '@uiw/react-md-editor/markdown-editor.css';
 
 import GenericModal, {InlineLabel} from '../widgets/generic_modal';
 import {WikiDoc} from '../../types/wikiDoc';
+import useEditorColorMode from '../../hooks/useEditorColorMode';
 
 const ID = 'wikiDoc_update';
 
@@ -26,6 +27,7 @@ export type WikiDocViewModalProps = {
 } & Partial<ComponentProps<typeof GenericModal>>;
 
 const BaseInput = styled.input`
+    color: rgb(var(--center-channel-color-rgb));
     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
     background-color: rgb(var(--center-channel-bg-rgb));
     border: none;
@@ -63,12 +65,6 @@ const Container = styled.div`
 `;
 
 const EditorWrapper = styled.div<{$viewOnly: boolean}>`
-    .w-md-editor-text-input {
-        color: rgb(var(--center-channel-color-rgb)) !important;
-        -webkit-text-fill-color: rgb(var(--center-channel-color-rgb)) !important;
-        caret-color: rgb(var(--center-channel-color-rgb));
-    }
-
     .w-md-editor {
         border-radius: 4px;
         box-shadow: ${({$viewOnly}) => ($viewOnly ? 'none' : 'inset 0 0 0 1px rgba(var(--center-channel-color-rgb), 0.16)')};
@@ -93,7 +89,9 @@ const EditorWrapper = styled.div<{$viewOnly: boolean}>`
 
     .w-md-editor-text-input,
     .w-md-editor-text {
-        color: rgb(var(--center-channel-color-rgb));
+        color: rgb(var(--center-channel-color-rgb)) !important;
+        -webkit-text-fill-color: rgb(var(--center-channel-color-rgb)) !important;
+        caret-color: rgb(var(--center-channel-color-rgb));
         background-color: rgb(var(--center-channel-bg-rgb));
         font-size: 14px;
         line-height: 1.6;
@@ -113,6 +111,7 @@ const WikiDocViewModal = ({updateFunc, canEdit, wikiDoc, ...modalProps}: WikiDoc
     const [name, setName] = useState(wikiDoc.name);
     const [content, setContent] = useState(wikiDoc.content);
     const [inEditMode, setInEditMode] = useState(false);
+    const colorMode = useEditorColorMode();
 
     const update = async (id: string, wikiName: string, wikiContent: string) => {
         await updateFunc(id, wikiName, wikiContent);
@@ -178,7 +177,10 @@ const WikiDocViewModal = ({updateFunc, canEdit, wikiDoc, ...modalProps}: WikiDoc
             hideFooter={!inEditMode}
         >
             <Container>
-                <EditorWrapper $viewOnly={!inEditMode}>
+                <EditorWrapper
+                    $viewOnly={!inEditMode}
+                    data-color-mode={colorMode}
+                >
                     <MDEditor
                         value={content}
                         onChange={(val) => setContent(val ?? '')}

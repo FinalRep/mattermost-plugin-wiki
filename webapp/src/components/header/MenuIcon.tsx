@@ -5,10 +5,10 @@ import {useSelector} from 'react-redux';
 import {id as pluginId} from 'src/manifest';
 
 import {isWikiRHSOpen} from '../../selectors';
+import useEditorColorMode from '../../hooks/useEditorColorMode';
 
 import ReactLogoWhite from './wiki-logo.png';
-
-//import ReactLogoDark from './wiki-dark.png';
+import ReactLogoDark from './wiki-dark.png';
 
 export default function MenuIcon() {
     const myRef = useRef<HTMLImageElement>(null);
@@ -24,9 +24,11 @@ export default function MenuIcon() {
         }
     }
 
+    const colorMode = useEditorColorMode();
+
     return (
         <img
-            src={`/static/plugins/${pluginId}/${isRHSOpen ? ReactLogoWhite : ReactLogoWhite}`}
+            src={`/static/plugins/${pluginId}/${colorMode === 'light' ? ReactLogoDark : ReactLogoWhite}`}
             ref={myRef}
             alt='Home'
             height='23px'

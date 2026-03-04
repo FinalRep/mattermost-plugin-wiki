@@ -18,7 +18,7 @@ import {FormattedMessage, useIntl} from 'react-intl';
 
 import {createWikiDoc, deleteWikiDoc, saveWikiDoc} from '../../client';
 import {useWikiDocsCrud} from '../../hooks/wikiDocs';
-import {canUserUpdateWikiDoc} from '../../selectors';
+import {canUserUpdateWikiDoc, isDirectOrGroupChannel} from '../../selectors';
 
 import {PaginationRow} from '../pagination_row';
 
@@ -51,6 +51,25 @@ const Header = styled.div`
     min-height: 13rem;
     margin-bottom: 4rem;
     display: grid;
+`;
+
+const Button = styled.button`
+    color: var(--button-color);
+    background: var(--button-bg);
+    text-decoration: none;
+    position: relative;
+    display: inline-flex;
+    height: 40px;
+    -moz-box-align: center;
+    align-items: center;
+    -moz-box-pack: center;
+    justify-content: center;
+    padding: 0px 20px;
+    border: 0px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.15s ease-out;
 `;
 
 const Heading = styled.h4`
@@ -121,6 +140,14 @@ const ListItem = styled.div`
     }
 `;
 
+const UnavailableDesc = styled.p`
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 400;
+    color: rgba(var(--center-channel-color-rgb), 0.56);
+    margin-top: 0.5rem;
+`;
+
 const RHSHome = () => {
     const dispatch = useDispatch<ThunkDispatch<GlobalState, undefined, AnyAction>>();
     const {formatMessage} = useIntl();
@@ -130,6 +157,7 @@ const RHSHome = () => {
     const currentChannel = useSelector((state: GlobalState) => getCurrentChannel(state));
     const currentUserId = useSelector<GlobalState, string>(getCurrentUserId);
     const canEdit = useSelector<GlobalState, boolean>(canUserUpdateWikiDoc);
+    const isDirect = useSelector((state: GlobalState) => isDirectOrGroupChannel(state));
 
     const teamName = currentTeam?.display_name ?? '';
     const channelName = currentChannel?.display_name ?? '';
@@ -174,6 +202,24 @@ const RHSHome = () => {
         </>
     );
 
+    // Wiki is not available in DMs or group messages
+    if (isDirect) {
+        return (
+            <RHSContainer>
+                <RHSContent>
+                    <WelcomeBlock>
+                        <Heading>
+                            <FormattedMessage defaultMessage='Wiki' />
+                        </Heading>
+                        <UnavailableDesc>
+                            <FormattedMessage defaultMessage='Wiki pages are only available in channels, not in direct or group messages.' />
+                        </UnavailableDesc>
+                    </WelcomeBlock>
+                </RHSContent>
+            </RHSContainer>
+        );
+    }
+
     let headerContent;
 
     if (hasWikiDocs) {
@@ -193,7 +239,7 @@ const RHSHome = () => {
                                         {wikiDoc.name}
                                     </div>
                                     {canEdit &&
-                                        <button
+                                        <Button
                                             className={'icon-trash-can-outline icon-16 btn-icon'}
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -230,14 +276,14 @@ const RHSHome = () => {
                     {list}
                     {canEdit ?
                         <span>
-                            <button
+                            <Button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     dispatch(displayWikiDocCreateModal({createFunc: createNew}));
                                 }}
                             >
-                                <FormattedMessage defaultMessage='Add New' />
-                            </button>
+                                <FormattedMessage defaultMessage='+ New Page' />
+                            </Button>
                         </span> :
                         <span>
                             <WelcomeWarn>
@@ -262,14 +308,14 @@ const RHSHome = () => {
                         <WelcomeWarn>
                             <FormattedMessage defaultMessage='No wiki pages yet — add the first one!' />
                         </WelcomeWarn>
-                        <button
+                        <Button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 dispatch(displayWikiDocCreateModal({createFunc: createNew}));
                             }}
                         >
                             <FormattedMessage defaultMessage='Add New' />
-                        </button>
+                        </Button>
                     </> :
                     <WelcomeWarn>
                         <FormattedMessage defaultMessage="No wiki pages yet, and you don't have permission to create any in this channel." />
