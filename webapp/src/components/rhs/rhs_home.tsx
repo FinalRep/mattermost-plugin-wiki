@@ -53,6 +53,26 @@ const Header = styled.div`
     display: grid;
 `;
 
+const DeleteButton = styled.button`
+    color: var(--button-color);
+    background: var(--button-bg);
+    text-decoration: none;
+    position: relative;
+    display: inline-flex;
+    height: 30px;
+    width: 30px;
+    -moz-box-align: center;
+    align-items: center;
+    -moz-box-pack: center;
+    justify-content: center;
+    padding: 0px 20px;
+    border: 0px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: 0.15s ease-out;
+`;
+
 const Button = styled.button`
     color: var(--button-color);
     background: var(--button-bg);
@@ -104,7 +124,6 @@ const PaginationContainer = styled.div`
 const ListSection = styled.div`
     margin-top: 1rem;
     margin-bottom: 5rem;
-    box-shadow: 0px -1px 0px rgba(var(--center-channel-color-rgb), 0.08);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     grid-template-rows: repeat(auto-fill, minmax(32px, 1fr));
@@ -117,7 +136,6 @@ const ListSection = styled.div`
         width: 100%;
         height: 1px;
         bottom: 0;
-        box-shadow: 0px -1px 0px rgba(var(--center-channel-color-rgb), 0.08);
     }
 `;
 
@@ -239,7 +257,7 @@ const RHSHome = () => {
                                         {wikiDoc.name}
                                     </div>
                                     {canEdit &&
-                                        <Button
+                                        <DeleteButton
                                             className={'icon-trash-can-outline icon-16 btn-icon'}
                                             onClick={(e) => {
                                                 e.stopPropagation();
