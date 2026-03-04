@@ -28,8 +28,6 @@ This will produce a single plugin file (with support for multiple architectures)
 dist/com.mattermost.plugin-wiki-1.0.0.tar.gz
 ```
 
-Then no matter how you created the **com.mattermost.plugin-wiki-0.1.0.tar.gz** file you can upload it and [manually install](https://mattermost.gitbook.io/plugin-confluence/setup/install-the-mattermost-plugin#alternative-install-via-manual-upload) it.
-
 # Sources
 
 This plugin is based on the original code from the [CyberPeace-Institute](https://github.com/CyberPeace-Institute/mattermost-plugin-wiki).

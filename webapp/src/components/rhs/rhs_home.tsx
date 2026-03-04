@@ -134,7 +134,7 @@ const RHSHome = () => {
     const createNew = async (name: string, description: string, status: string, content: string) => {
         const wikiDoc = await createWikiDoc(currentChannelId, currentUserId, currentTeamId, name, description, status, content);
         fetchWikiDocs();
-        console.log(wikiDoc);
+        //console.log(wikiDoc);
     };
 
     const updateWiki = async (id: string, name: string, content: string) => {

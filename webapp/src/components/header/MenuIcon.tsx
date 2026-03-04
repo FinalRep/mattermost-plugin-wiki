@@ -14,8 +14,6 @@ export default function MenuIcon() {
     const myRef = useRef<HTMLImageElement>(null);
     const isRHSOpen = useSelector(isWikiRHSOpen);
 
-    console.log(isRHSOpen);
-
     // If it has been mounted, we know our parent is always a button.
     const parent = myRef?.current ? myRef?.current?.parentNode as HTMLButtonElement : null;
     if (parent) {
