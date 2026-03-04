@@ -38,10 +38,9 @@ const WelcomeBlock = styled.div`
 `;
 
 const WelcomeDesc = styled.p`
-    font-size: 14px;
+    font-size: 15px;
     line-height: 21px;
-    font-weight: 400;
-    margin-bottom: 3rem;
+    font-weight: 1000;
 `;
 
 const WelcomeWarn = styled(WelcomeDesc)`
