@@ -255,7 +255,7 @@ const RHSHome = () => {
             <WelcomeBlock>
                 {pageHeader}
                 <WelcomeDesc>
-                    <FormattedMessage defaultMessage='Informative pages to help you navigate this channel.' />
+                    <FormattedMessage defaultMessage='Your Pages:' />
                 </WelcomeDesc>
                 {canEdit ?
                     <>
