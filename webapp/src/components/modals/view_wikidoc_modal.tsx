@@ -3,8 +3,11 @@ import React, {ComponentProps, useEffect, useState} from 'react';
 import {useIntl} from 'react-intl';
 
 import styled from 'styled-components';
+import MDEditor, {commands} from '@uiw/react-md-editor';
+import rehypeSanitize from 'rehype-sanitize';
 
-import MarkdownTextbox from '../markdown/markdown_textbox';
+import '@uiw/react-md-editor/markdown-editor.css';
+
 import GenericModal, {InlineLabel} from '../widgets/generic_modal';
 import {WikiDoc} from '../../types/wikiDoc';
 
@@ -41,22 +44,67 @@ const SizedGenericModal = styled(GenericModal)`
     width: calc(80vw);
     max-width: 1200px;
     @media (max-width: 800px) {
-      .width: calc(80vw);
+      width: calc(95vw);
     }
 `;
 
 const HeaderContainer = styled.div`
-	display: flex;
-	flex-direction: column;
+    display: flex;
+    flex-direction: column;
 `;
 
 const Container = styled.div`
-	display: flex;
-	flex-direction: column;
+    display: flex;
+    flex-direction: column;
 
-	& > div, & > input {
-		margin-bottom: 24px;
-	}
+    & > div, & > input {
+        margin-bottom: 24px;
+    }
+`;
+
+const EditorWrapper = styled.div<{$viewOnly: boolean}>`
+    .w-md-editor-text-input {
+        color: rgb(var(--center-channel-color-rgb)) !important;
+        -webkit-text-fill-color: rgb(var(--center-channel-color-rgb)) !important;
+        caret-color: rgb(var(--center-channel-color-rgb));
+    }
+
+    .w-md-editor {
+        border-radius: 4px;
+        box-shadow: ${({$viewOnly}) => ($viewOnly ? 'none' : 'inset 0 0 0 1px rgba(var(--center-channel-color-rgb), 0.16)')};
+        background-color: rgb(var(--center-channel-bg-rgb));
+        color: rgb(var(--center-channel-color-rgb));
+    }
+
+    .w-md-editor-toolbar {
+        background-color: rgba(var(--center-channel-color-rgb), 0.04);
+        border-bottom: 1px solid rgba(var(--center-channel-color-rgb), 0.12);
+        border-radius: 4px 4px 0 0;
+    }
+
+    .w-md-editor-toolbar li > button {
+        color: rgba(var(--center-channel-color-rgb), 0.72);
+    }
+
+    .w-md-editor-toolbar li > button:hover {
+        color: rgb(var(--center-channel-color-rgb));
+        background-color: rgba(var(--center-channel-color-rgb), 0.08);
+    }
+
+    .w-md-editor-text-input,
+    .w-md-editor-text {
+        color: rgb(var(--center-channel-color-rgb));
+        background-color: rgb(var(--center-channel-bg-rgb));
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .wmde-markdown {
+        background-color: rgb(var(--center-channel-bg-rgb));
+        color: rgb(var(--center-channel-color-rgb));
+        font-size: 14px;
+        padding: ${({$viewOnly}) => ($viewOnly ? '0' : '16px')};
+    }
 `;
 
 const WikiDocViewModal = ({updateFunc, canEdit, wikiDoc, ...modalProps}: WikiDocViewModalProps) => {
@@ -73,13 +121,12 @@ const WikiDocViewModal = ({updateFunc, canEdit, wikiDoc, ...modalProps}: WikiDoc
             name: wikiName,
             content: wikiContent,
         });
-
         toggleEdit();
     };
 
     const requirementsMet = (name !== '');
 
-    const toggleEdit = () => (canEdit ? setInEditMode(!inEditMode) : '');
+    const toggleEdit = () => (canEdit ? setInEditMode((prev) => !prev) : undefined);
 
     useEffect(() => {
         if (!inEditMode) {
@@ -95,17 +142,19 @@ const WikiDocViewModal = ({updateFunc, canEdit, wikiDoc, ...modalProps}: WikiDoc
             style={{right: '45px'}}
             disabled={!canEdit}
             onClick={toggleEdit}
+            title={formatMessage({defaultMessage: 'Edit page'})}
         >
             <span className='icon-pencil-outline icon-16' />
-        </button>);
+        </button>
+    );
 
     const headerText = (
         <HeaderContainer>
-            <InlineLabel>{formatMessage({defaultMessage: 'Wiki name'})}</InlineLabel>
+            <InlineLabel>{formatMessage({defaultMessage: 'Page title'})}</InlineLabel>
             <BaseInput
-                autoFocus={true}
+                autoFocus={inEditMode}
                 disabled={!inEditMode}
-                type={'text'}
+                type='text'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
             />
@@ -118,7 +167,7 @@ const WikiDocViewModal = ({updateFunc, canEdit, wikiDoc, ...modalProps}: WikiDoc
             components={{ExtraHeaderButton}}
             modalHeaderText={headerText}
             {...modalProps}
-            confirmButtonText={formatMessage({defaultMessage: 'Update'})}
+            confirmButtonText={formatMessage({defaultMessage: 'Save'})}
             cancelButtonText={formatMessage({defaultMessage: 'Cancel'})}
             isConfirmDisabled={!requirementsMet}
             handleConfirm={() => update(wikiDoc.id, name, content)}
@@ -129,13 +178,44 @@ const WikiDocViewModal = ({updateFunc, canEdit, wikiDoc, ...modalProps}: WikiDoc
             hideFooter={!inEditMode}
         >
             <Container>
-                <MarkdownTextbox
-                    value={content}
-                    disabled={!inEditMode}
-                    setValue={setContent}
-                    inPreview={!inEditMode}
-                    placeholder={formatMessage({defaultMessage: 'You can add the content of the doc here or edit it later'})}
-                />
+                <EditorWrapper $viewOnly={!inEditMode}>
+                    <MDEditor
+                        value={content}
+                        onChange={(val) => setContent(val ?? '')}
+                        preview={inEditMode ? 'live' : 'preview'}
+                        hideToolbar={!inEditMode}
+                        height={500}
+                        previewOptions={{
+                            rehypePlugins: [[rehypeSanitize]],
+                        }}
+                        commands={[
+                            commands.bold,
+                            commands.italic,
+                            commands.strikethrough,
+                            commands.hr,
+                            commands.divider,
+                            commands.title1,
+                            commands.title2,
+                            commands.title3,
+                            commands.divider,
+                            commands.link,
+                            commands.quote,
+                            commands.code,
+                            commands.codeBlock,
+                            commands.divider,
+                            commands.unorderedListCommand,
+                            commands.orderedListCommand,
+                            commands.checkedListCommand,
+                            commands.divider,
+                            commands.table,
+                        ]}
+                        extraCommands={[
+                            commands.codeEdit,
+                            commands.codeLive,
+                            commands.codePreview,
+                        ]}
+                    />
+                </EditorWrapper>
             </Container>
         </SizedGenericModal>
     );

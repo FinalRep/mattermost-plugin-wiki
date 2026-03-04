@@ -98,6 +98,7 @@
     "@mdi/js": "^7.3.67",
     "@mdi/react": "^1.6.1",
     "@tippyjs/react": "^4.2.6",
+    "@uiw/react-md-editor": "4.0.11",
     "chrono-node": "^2.7.0",
     "core-js": "^3.33.0",
     "debounce": "^2.0.0",
@@ -116,6 +117,7 @@
     "react-select": "^5.8.0",
     "react-use": "^17.4.2",
     "redux": "^4.2.1",
+    "rehype-sanitize": "6.0.0",
     "reselect": "5.1.1",
     "styled-components": "^6.1.0",
     "typescript": "^5.3.0"
@@ -172,8 +174,8 @@
       "@mattermost/types": "$@mattermost/types"
     },
     "eslint-plugin-formatjs": {
-      "@typescript-eslint/utils": "$@typescript-eslint/utils",
-      "@typescript-eslint/typescript-estree": "$@typescript-eslint/typescript-estree",
+      "@typescript-eslint/utils": "^7.18.0",
+      "@typescript-eslint/typescript-estree": "^7.18.0",
       "minimatch": "^9.0.5"
     }
   }

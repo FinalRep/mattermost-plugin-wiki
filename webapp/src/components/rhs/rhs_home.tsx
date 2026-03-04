@@ -10,12 +10,11 @@ import styled from 'styled-components';
 
 import {GlobalState} from '@mattermost/types/store';
 
-import {getCurrentTeamId} from 'mattermost-redux/selectors/entities/teams';
-
-import {FormattedMessage} from 'react-intl';
-
-import {getCurrentChannelId} from 'mattermost-redux/selectors/entities/channels';
+import {getCurrentTeam} from 'mattermost-redux/selectors/entities/teams';
+import {getCurrentChannel, getCurrentChannelId} from 'mattermost-redux/selectors/entities/channels';
 import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
+
+import {FormattedMessage, useIntl} from 'react-intl';
 
 import {createWikiDoc, deleteWikiDoc, saveWikiDoc} from '../../client';
 import {useWikiDocsCrud} from '../../hooks/wikiDocs';
@@ -60,6 +59,15 @@ const Heading = styled.h4`
     line-height: 24px;
     font-weight: 700;
     color: rgba(var(--center-channel-color-rgb), 0.72);
+    margin-bottom: 0.25rem;
+`;
+
+const SubHeading = styled.p`
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(var(--center-channel-color-rgb), 0.56);
+    margin-top: 0;
+    margin-bottom: 1rem;
 `;
 
 const PaginationContainer = styled.div`
@@ -99,7 +107,7 @@ const ListItem = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.5rem 0 2rem;
+    padding: 0.5rem 0 0.5rem;
     margin: 0 2.75rem;
     box-shadow: 0px -1px 0px rgba(var(--center-channel-color-rgb), 0.08);
 
@@ -116,11 +124,16 @@ const ListItem = styled.div`
 
 const RHSHome = () => {
     const dispatch = useDispatch<ThunkDispatch<GlobalState, undefined, AnyAction>>();
+    const {formatMessage} = useIntl();
 
     const currentChannelId = useSelector<GlobalState, string>(getCurrentChannelId);
-    const currentTeamId = useSelector<GlobalState, string>(getCurrentTeamId);
+    const currentTeam = useSelector((state: GlobalState) => getCurrentTeam(state));
+    const currentChannel = useSelector((state: GlobalState) => getCurrentChannel(state));
     const currentUserId = useSelector<GlobalState, string>(getCurrentUserId);
     const canEdit = useSelector<GlobalState, boolean>(canUserUpdateWikiDoc);
+
+    const teamName = currentTeam?.display_name ?? '';
+    const channelName = currentChannel?.display_name ?? '';
 
     const [
         wikiDocs,
@@ -132,9 +145,8 @@ const RHSHome = () => {
     });
 
     const createNew = async (name: string, description: string, status: string, content: string) => {
-        const wikiDoc = await createWikiDoc(currentChannelId, currentUserId, currentTeamId, name, description, status, content);
+        await createWikiDoc(currentChannelId, currentUserId, currentTeam?.id ?? '', name, description, status, content);
         fetchWikiDocs();
-        //console.log(wikiDoc);
     };
 
     const updateWiki = async (id: string, name: string, content: string) => {
@@ -149,12 +161,26 @@ const RHSHome = () => {
 
     const hasWikiDocs = Boolean(wikiDocs?.length);
 
+    const pageHeader = (
+        <>
+            <Heading>
+                <FormattedMessage defaultMessage='Wiki' />
+            </Heading>
+            <SubHeading>
+                {formatMessage(
+                    {defaultMessage: '{team} · #{channel}'},
+                    {team: teamName, channel: channelName},
+                )}
+            </SubHeading>
+        </>
+    );
+
     let headerContent;
 
     if (hasWikiDocs) {
         const list = (
             <>
-                { wikiDocs ?
+                {wikiDocs ?
                     <>
                         <ListSection>
                             {wikiDocs.map((wikiDoc, index) => (
@@ -189,9 +215,7 @@ const RHSHome = () => {
                         </PaginationContainer>
                     </> :
                     <span>
-                        <FormattedMessage
-                            defaultMessage='No wiki docs yet.'
-                        />
+                        <FormattedMessage defaultMessage='No wiki docs yet.' />
                     </span>
                 }
             </>
@@ -199,15 +223,10 @@ const RHSHome = () => {
 
         headerContent = (
             <WelcomeBlock>
-                <Heading>
-                    <FormattedMessage defaultMessage='Wiki Docs List' />
-                </Heading>
+                {pageHeader}
                 <WelcomeDesc>
-                    <FormattedMessage
-                        defaultMessage='Here you will see informative pages that can help you better navigate this channel.'
-                    />
+                    <FormattedMessage defaultMessage='Your Pages:' />
                 </WelcomeDesc>
-
                 <div>
                     {list}
                     {canEdit ?
@@ -218,9 +237,7 @@ const RHSHome = () => {
                                     dispatch(displayWikiDocCreateModal({createFunc: createNew}));
                                 }}
                             >
-                                <FormattedMessage
-                                    defaultMessage='Add New'
-                                />
+                                <FormattedMessage defaultMessage='Add New' />
                             </button>
                         </span> :
                         <span>
@@ -237,19 +254,14 @@ const RHSHome = () => {
     if (!headerContent) {
         headerContent = (
             <WelcomeBlock>
-                <Heading>
-                    <FormattedMessage defaultMessage='Welcome to the WIKI!' />
-                </Heading>
+                {pageHeader}
                 <WelcomeDesc>
-                    <FormattedMessage
-                        defaultMessage='Here you will see informative pages that can help you better navigate this channel.'
-                    />
+                    <FormattedMessage defaultMessage='Informative pages to help you navigate this channel.' />
                 </WelcomeDesc>
-
                 {canEdit ?
                     <>
                         <WelcomeWarn>
-                            <FormattedMessage defaultMessage='There are no wiki pages to view but you can always add some.' />
+                            <FormattedMessage defaultMessage='No wiki pages yet — add the first one!' />
                         </WelcomeWarn>
                         <button
                             onClick={(e) => {
@@ -257,13 +269,11 @@ const RHSHome = () => {
                                 dispatch(displayWikiDocCreateModal({createFunc: createNew}));
                             }}
                         >
-                            <FormattedMessage
-                                defaultMessage='Add New'
-                            />
+                            <FormattedMessage defaultMessage='Add New' />
                         </button>
                     </> :
                     <WelcomeWarn>
-                        <FormattedMessage defaultMessage="There are no wiki pages to view, unfortunately you don't have permission to create wiki pages in this channel." />
+                        <FormattedMessage defaultMessage="No wiki pages yet, and you don't have permission to create any in this channel." />
                     </WelcomeWarn>
                 }
             </WelcomeBlock>
