@@ -9,7 +9,10 @@ The docs will be in .md format and saved in the Mattermost database.
 
 Access the latest releases of the Mattermost wiki plugin by downloading the `mattermost-plugin-wiki.tar.gz` file from the releases in this repository: <https://github.com/finalrep/mattermost-plugin-wiki/releases>. After downloading and installing the plugin in the System Console, select the menu on the right of your chat to open your team **Wiki**.
 
-## Getting Started
+## Development
+
+### Getting Started
+
 Clone the repository:
 ```
 git clone https://github.com/finalrep/mattermost-plugin-wiki 
