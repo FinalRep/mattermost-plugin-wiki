@@ -1,0 +1,81 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  server:
+    name: Server Tests
+    runs-on: ubuntu-latest
+    container:
+      image: golang:1.26-alpine
+
+    steps:
+      - name: Install git
+        run: apk add --no-cache git make
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: /root/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Run server tests
+        run: go test -v -race ./server/...
+
+  webapp:
+    name: Webapp Tests
+    runs-on: ubuntu-latest
+    container:
+      image: node:20-alpine
+
+    steps:
+      - name: Install git and make
+        run: apk add --no-cache git make
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: webapp/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('webapp/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Install dependencies
+        working-directory: webapp
+        run: npm ci --cache .npm
+
+      - name: Lint
+        working-directory: webapp
+        run: npm run lint
+
+      - name: Type check
+        working-directory: webapp
+        run: npm run check-types
+
+      - name: Run tests
+        working-directory: webapp
+        run: npm test
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: webapp-test-results
+          path: webapp/build/test-results.xml
+          retention-days: 7

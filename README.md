@@ -1,4 +1,9 @@
+[![Go Report Card](https://goreportcard.com/report/github.com/CyberPeace-Institute/mattermost-plugin-wiki)](https://goreportcard.com/report/github.com/CyberPeace-Institute/mattermost-plugin-wiki)
+[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/FinalRep/mattermost-plugin-wiki/blob/main/LICENSE)
+
 # Mattermost Wiki Plugin
+
+![wiki](https://github.com/FinalRep/mattermost-plugin-wiki/blob/main/assets/wiki-logo-512.png?raw=true)
 
 ### A self-hosted plugin for managing a simple wiki within your Mattermost installation
 
