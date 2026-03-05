@@ -9,7 +9,13 @@
 ### A self-hosted plugin for managing a simple wiki within your Mattermost installation
 
 This plugin creates a simple wiki for your Mattermost.
-The docs will be in .md format and saved in the Mattermost database.
+
+## Features
+
+- Markdown formatted documentations
+- Create multiple pages separated by teams and channels
+- Markdown Editor integration
+- Stored inside Mattermost's own database
 
 ## Try Mattermost Wiki Plugin
 
@@ -23,8 +29,6 @@ Clone the repository:
 ```
 git clone https://github.com/finalrep/mattermost-plugin-wiki 
 ```
-
-Note that this project uses [Go modules](https://github.com/golang/go/wiki/Modules). Be sure to locate the project outside of `$GOPATH`.
 
 ### Build your plugin:
 ```
