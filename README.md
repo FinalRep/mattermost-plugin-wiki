@@ -4,7 +4,7 @@
 
 # Mattermost Wiki Plugin
 
-![wiki](assets/wiki-logo-512.png)
+![wiki](assets/wiki-logo-256.png)
 
 ### A self-hosted plugin for managing a simple wiki within your Mattermost installation
 
