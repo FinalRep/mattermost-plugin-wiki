@@ -18,8 +18,8 @@ jobs:
       image: golang:1.26-alpine
 
     steps:
-      - name: Install git
-        run: apk add --no-cache git make
+      - name: Install build dependencies
+        run: apk add --no-cache git make gcc musl-dev
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
             ${{ runner.os }}-go-
 
       - name: Run server tests
-        run: go test -v -race ./server/...
+        run: CGO_ENABLED=1 go test -v -race ./server/...
 
   webapp:
     name: Webapp Tests
@@ -42,7 +42,7 @@ jobs:
       image: node:20-alpine
 
     steps:
-      - name: Install git and make
+      - name: Install build dependencies
         run: apk add --no-cache git make
 
       - name: Checkout
@@ -51,14 +51,14 @@ jobs:
       - name: Cache npm
         uses: actions/cache@v4
         with:
-          path: webapp/.npm
+          path: webapp/node_modules
           key: ${{ runner.os }}-npm-${{ hashFiles('webapp/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-npm-
 
       - name: Install dependencies
         working-directory: webapp
-        run: npm ci --cache .npm
+        run: npm install -f
 
       - name: Lint
         working-directory: webapp
