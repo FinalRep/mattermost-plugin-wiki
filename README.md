@@ -4,7 +4,7 @@
 
 # Mattermost Wiki Plugin
 
-![wiki](https://github.com/FinalRep/mattermost-plugin-wiki/blob/main/assets/wiki-logo-512.png?raw=true)
+![wiki](assets/wiki-logo-512.png)
 
 ### A self-hosted plugin for managing a simple wiki within your Mattermost installation
 
@@ -16,6 +16,8 @@ This plugin creates a simple wiki for your Mattermost.
 - Create multiple pages separated by teams and channels
 - Markdown Editor integration
 - Stored inside Mattermost's own database
+
+![Features](assets/features.gif)
 
 ## Try Mattermost Wiki Plugin
 
@@ -38,9 +40,9 @@ make
 This will produce a single plugin file (with support for multiple architectures) for upload to your Mattermost server:
 
 ```
-dist/com.mattermost.plugin-wiki-1.0.0.tar.gz
+dist/com.mattermost.plugin-wiki-<version>.tar.gz
 ```
 
-# Sources
+## Sources
 
 This plugin is based on the original code from the [CyberPeace-Institute](https://github.com/CyberPeace-Institute/mattermost-plugin-wiki).
