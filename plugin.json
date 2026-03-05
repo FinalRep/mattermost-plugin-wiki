@@ -4,9 +4,9 @@
     "description": "A simple wiki plugin.",
     "homepage_url": "https://github.com/finalrep/mattermost-plugin-wiki",
     "support_url": "https://github.com/finalrep/mattermost-plugin-wiki/issues",
-    "release_notes_url": "https://github.com/finalrep/mattermost-plugin-wiki/releases/tag/v1.0.0",
+    "release_notes_url": "https://github.com/finalrep/mattermost-plugin-wiki/releases/tag/v1.0.1",
     "icon_path": "assets/wiki-logo.png",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "min_server_version": "9.0.0",
     "server": {
         "executables": {

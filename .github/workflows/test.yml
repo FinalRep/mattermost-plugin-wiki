@@ -68,6 +68,10 @@ jobs:
         working-directory: webapp
         run: npm run check-types
 
+      - name: Audit
+        working-directory: webapp
+        run: npm audit
+
       - name: Run tests
         working-directory: webapp
         run: npm test

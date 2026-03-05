@@ -165,7 +165,6 @@ const WikiDocCreateModal = ({createFunc, ...modalProps}: WikiDocCreateModalProps
                             commands.codeLive,
                             commands.codePreview,
                         ]}
-                        placeholder={formatMessage({defaultMessage: 'Write your content in Markdown...'})}
                     />
                 </EditorWrapper>
             </Body>

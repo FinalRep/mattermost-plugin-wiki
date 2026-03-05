@@ -59,8 +59,10 @@ export default class Plugin {
         const client = new Client4();
         client.setUrl(siteUrl);
 
-        // Register the RHS component once — Mattermost returns a toggleRHSPlugin function
-        const {toggleRHSPlugin} = registry.registerRightHandSidebarComponent(RightHandSidebar, 'Wiki');
+        // registerRightHandSidebarComponent returns {toggleRHSPlugin} at runtime —
+        // a Redux action object that must be dispatched, not called directly.
+        // The declared return type { id: string } is incomplete, so we cast via unknown.
+        const {toggleRHSPlugin} = registry.registerRightHandSidebarComponent(RightHandSidebar, 'Wiki') as unknown as {toggleRHSPlugin: AnyAction};
 
         // Store toggle in redux so other parts of the plugin can trigger it
         store.dispatch(setToggleRHSAction(() => store.dispatch(toggleRHSPlugin)) as AnyAction);

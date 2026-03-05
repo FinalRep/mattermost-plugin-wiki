@@ -1,7 +1,6 @@
+[![Tests](https://github.com/finalrep/mattermost-plugin-wiki/actions/workflows/test.yml/badge.svg?branch=master&event=push)](https://github.com/finalrep/mattermost-plugin-wiki/actions/workflows/test.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/CyberPeace-Institute/mattermost-plugin-wiki)](https://goreportcard.com/report/github.com/CyberPeace-Institute/mattermost-plugin-wiki)
 [![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/FinalRep/mattermost-plugin-wiki/blob/main/LICENSE)
-
-[![Tests](https://github.com/finalrep/mattermost-plugin-wiki/actions/workflows/test.yml/badge.svg?branch=master&event=push)](https://github.com/finalrep/mattermost-plugin-wiki/actions/workflows/test.yml)
 
 # Mattermost Wiki Plugin
 

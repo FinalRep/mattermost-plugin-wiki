@@ -1,7 +1,18 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import {AnyAction} from 'redux';
 import {History} from 'history';
+
+type OpenModalPayload = {
+    modalId: string;
+    dialogType: React.ElementType;
+    dialogProps?: Record<string, unknown>;
+}
+
+type ModalsType = {
+    openModal: (payload: OpenModalPayload) => AnyAction;
+}
 
 export const {
     formatText,
@@ -15,7 +26,7 @@ export const {
     browserHistory,
 
 // @ts-ignore
-}: {modals: unknown, browserHistory: History} = global.WebappUtils ?? {};
+}: {modals: ModalsType, browserHistory: History} = global.WebappUtils ?? {};
 
 export const {
     Timestamp,

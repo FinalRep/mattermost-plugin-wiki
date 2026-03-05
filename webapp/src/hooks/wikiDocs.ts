@@ -18,8 +18,8 @@ type ParamsState = Required<Omit<FetchWikiDocsParams, 'team_id' | 'channel_id' |
 
 const searchDebounceDelayMilliseconds = 300;
 
-export async function getWikiDocOrFetch(id: string, wikiDocs: WikiDoc[] | null) {
-    return wikiDocs?.find((p) => p.id === id) ?? clientFetchWikiDoc(id);
+export async function getWikiDocOrFetch(id: string, wikiDocs: WikiDoc[] | null): Promise<WikiDoc | undefined> {
+    return wikiDocs?.find((p) => p.id === id) ?? (clientFetchWikiDoc(id) as Promise<WikiDoc>);
 }
 
 type EditWikiDocReturn = [WikiDoc | undefined, (update: Partial<WikiDoc>) => void]
@@ -27,7 +27,7 @@ type EditWikiDocReturn = [WikiDoc | undefined, (update: Partial<WikiDoc>) => voi
 export function useEditWikiDoc(id: WikiDoc['id']): EditWikiDocReturn {
     const [wikiDoc, setWikiDoc] = useState<WikiDoc | undefined>();
     useEffect(() => {
-        clientFetchWikiDoc(id).then(setWikiDoc);
+        (clientFetchWikiDoc(id) as Promise<WikiDoc>).then(setWikiDoc);
     }, [id]);
 
     const updateWikiDoc = (update: Partial<WikiDoc>) => {
@@ -78,7 +78,8 @@ export function useWikiDocsCrud(
             return setSelectedWikiDocState(null);
         }
 
-        return setSelectedWikiDocState(await getWikiDocOrFetch(nextSelected, wikiDocs) ?? null);
+        const found = await getWikiDocOrFetch(nextSelected, wikiDocs);
+        return setSelectedWikiDocState(found ?? null);
     };
 
     /**
@@ -102,7 +103,6 @@ export function useWikiDocsCrud(
 
     const sortBy = (colName: FetchWikiDocsParams['sort']) => {
         if (params.sort === colName) {
-            // we're already sorting on this column; reverse the direction
             const newSortDirection = params.direction === 'asc' ? 'desc' : 'asc';
             setParams({direction: newSortDirection});
             return;
