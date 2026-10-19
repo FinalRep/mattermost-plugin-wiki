@@ -6,8 +6,8 @@
     "support_url": "https://github.com/finalrep/mattermost-plugin-wiki/issues",
     "release_notes_url": "https://github.com/finalrep/mattermost-plugin-wiki/releases/tag/v1.0.1",
     "icon_path": "assets/wiki-logo.png",
-    "version": "1.0.1",
-    "min_server_version": "9.0.0",
+    "version": "2.0.0",
+    "min_server_version": "12.0.0",
     "server": {
         "executables": {
             "linux-amd64": "server/dist/plugin-linux-amd64",
